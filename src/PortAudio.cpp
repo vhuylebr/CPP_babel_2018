@@ -71,3 +71,33 @@ PaDeviceIndex   Audio::PortAudio::GetDefaultOutputDevice()
 {
     return Pa_GetDefaultOutputDevice();
 }
+
+SAMPLE  Audio::PortAudio::getSampleMax()
+{
+    return max;
+}
+
+SAMPLE  Audio::PortAudio::getSampleVal()
+{
+    return val;
+}
+
+void    Audio::PortAudio::setSampleMax(SAMPLE &max, SAMPLE value)
+{
+    max = value;
+}
+
+void    Audio::PortAudio::setSampleVal(SAMPLE &val, SAMPLE value)
+{
+    val = value;
+}
+
+void    Audio::PortAudio::setPaError(PaError &err, PaError value)
+{
+    err = value;
+}
+
+PaStream    *Audio::PortAudio::getPaStream()
+{
+    return stream;
+}

@@ -96,11 +96,17 @@ namespace Audio
 			const char *GetErrorText(PaError errorCode);
 			PaDeviceIndex GetDefaultInputDevice(void);
 			PaDeviceIndex GetDefaultOutputDevice(void);
+			PaError	getPaError();
+			SAMPLE	getSampleMax();
+			SAMPLE	getSampleVal();
+			void	setSampleMax(SAMPLE &max, SAMPLE value);
+			void	setSampleVal(SAMPLE &val, SAMPLE value);
+			void	setPaError(PaError &err, PaError value);
+			PaStream *getPaStream();
 			void Sleep(long msec);
 		private:
 			PaStream	*stream; // onlyGetter
 			PaError	err; // get&Set
-			paTestData	data; // get&Set
 			SAMPLE	max; // get&Set
 			SAMPLE	val; // get&Set
 	};
