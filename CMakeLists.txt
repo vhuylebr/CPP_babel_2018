@@ -18,7 +18,11 @@ message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-c
    BASIC_SETUP
    BUILD missing)
    
-add_executable(main main.cpp)
+add_executable(main src/main.cpp
+             src/PortAudio.cpp
+             src/PortData.cpp
+             src/OutputParams.cpp
+             src/InputParams.cpp)
 
 #We have to add by hand all package beacause if not it does not work (CONAN_PKG::Poco CONAN_PKG::boost)
-target_link_libraries(main ${CONAN_LIBS_DEBUG})
+target_link_libraries(main ${CONAN_LIBS})
