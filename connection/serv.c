@@ -24,9 +24,12 @@ int main(void)
     char buf[BUFLEN];
      
     //create a UDP socket
-    if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
-    {
-        die("socket");
+	if ((s=socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1) {
+		die("socket");
+	}
+    if (listen(s, 44) == -1) {
+	printf("ECHEC LISTEN\n");
+	exit(84);
     }
      
     // zero out the structure
@@ -47,7 +50,6 @@ int main(void)
     {
         printf("Waiting for data...");
         fflush(stdout);
-         
         //try to receive some data, this is a blocking call
         if ((recv_len = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr *) &si_other, &slen)) == -1)
         {
