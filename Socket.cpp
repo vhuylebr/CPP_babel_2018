@@ -1,124 +1,110 @@
 //Socket.cpp
 
-#include "stdafx.h"
 #include "Socket.hpp"
 
 Socket::Socket()
 {
-    if( WSAStartup( MAKEWORD(2, 2), &wsaData ) != NO_ERROR )
-    {
-        cerr<<"Socket Initialization: Error with WSAStartup\n";
-        system("pause");
-        WSACleanup();
-        exit(10);
-    }
+	//Create a socket
+//	mySocket = socket(AF_INET, SOCK_STREAM, IPPROTO_UDP); // peut-être remplacer SOCK_STREAM par SOCK_DGRAM
 
-    //Create a socket
-    mySocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
+	int s;
 
-    if ( mySocket == INVALID_SOCKET )
-    {
-        cerr<<"Socket Initialization: Error creating socket"<<endl;
-        system("pause");
-        WSACleanup();
-        exit(11);
-    }
-
-    myBackup = mySocket;
+	if ((mySocket = socket(PF_INET, SOCK_DGRAM, IPPROTO_UDP)) == -1)
+	{
+		std::cerr  <<"Socket Initialization: Error creating socket"<<endl;
+		exit(84); // faire en dehors du constru
+	}
+	myBackup = mySocket;
 }
 
-Socket::~Socket()
+bool Socket::SendData(char *buffer)
 {
-    WSACleanup();
+	send( mySocket, buffer, strlen(buffer), 0);
+	//static_cast< const void *>(buffer.c_str()), buffer.length(), 0);
+	return true;
 }
 
-bool Socket::SendData( char *buffer )
+bool Socket::RecvData(char *buffer, int size )
 {
-    send( mySocket, buffer, strlen( buffer ), 0 );
-    return true;
-}
-
-bool Socket::RecvData( char *buffer, int size )
-{
-    int i = recv( mySocket, buffer, size, 0 );
-    buffer[i] = '\0';
-    return true;
+//	int i = 0;
+	int i = recv( mySocket, buffer, size, 0);
+	buffer[i] = '\0';
+	return true;
 }
 
 void Socket::CloseConnection()
 {
-    //cout<<"CLOSE CONNECTION"<<endl;
-    closesocket( mySocket );
-    mySocket = myBackup;
+	//std::cout <<"CLOSE CONNECTION"<<endl;
+	closesocket( mySocket );
+	mySocket = myBackup;
 }
 
 void Socket::GetAndSendMessage()
 {
-    char message[STRLEN];
-    cin.ignore();//without this, it gets the return char from the last cin and ignores the following one!
-    cout<<"Send > ";
-    cin.get( message, STRLEN );
-    SendData( message );
+	char message[STRLEN];
+//	std::string message;
+
+	std::cin.ignore(); //without this, it gets the return char from the last cin and ignores the following one!
+	std::cout  << "Send > ";
+	std::cin.get(message, STRLEN);
+	SendData(message);
 }
 
 void ServerSocket::StartHosting( int port )
 {
-     Bind(port);
-     Listen();
+	 Bind(port);
+	 Listen();
 }
 
 void ServerSocket::Listen()
 {
-    //cout<<"LISTEN FOR CLIENT..."<<endl;
+	//std::cout <<"LISTEN FOR CLIENT..."<<endl;
 
-    if ( listen ( mySocket, 1 ) == SOCKET_ERROR )
-    {
-        cerr<<"ServerSocket: Error listening on socket\n";
-        system("pause");
-        WSACleanup();
-        exit(15);
-    }
+/*	if (listen (mySocket, 1 ) == -1)
+	{
+		std::cerr <<"ServerSocket: Error listening on socket\n";
+		system("pause");
+		exit(15);
+	}*/
 
-    //cout<<"ACCEPT CONNECTION..."<<endl;
+	std::cout <<"ACCEPT CONNECTION..."<<endl;
 
-    acceptSocket = accept( myBackup, NULL, NULL );
-    while ( acceptSocket == SOCKET_ERROR )
-    {
-        acceptSocket = accept( myBackup, NULL, NULL );
-    }
-    mySocket = acceptSocket;
+	acceptSocket = accept( myBackup, NULL, NULL );
+	while ( acceptSocket == -1)
+	{
+		acceptSocket = accept( myBackup, NULL, NULL );
+	}
+	mySocket = acceptSocket;
 }
 
 void ServerSocket::Bind( int port )
 {
-    myAddress.sin_family = AF_INET;
-    myAddress.sin_addr.s_addr = INADDR_ANY;
-    myAddress.sin_port = htons( port );
+	myAddress.sin_family = AF_INET;
+	myAddress.sin_addr.s_addr = INADDR_ANY;
+	myAddress.sin_port = htons( port );
 
-    //cout<<"BIND TO PORT "<<port<<endl;
+	//std::cout <<"BIND TO PORT "<<port<<endl;
 
-    if ( bind ( mySocket, (SOCKADDR*) &myAddress, sizeof( myAddress) ) == SOCKET_ERROR )
-    {
-        cerr<<"ServerSocket: Failed to connect\n";
-        system("pause");
-        WSACleanup();
-        exit(14);
-    }
+	if ( bind ( mySocket, (struct sockaddr*)&myAddress, sizeof(myAddress)) == -1)
+	{
+		std::cerr <<"ServerSocket: Failed to connect\n";
+		system("pause");
+		exit(14);
+	}
 }
 
 void ClientSocket::ConnectToServer( const char *ipAddress, int port )
 {
-    myAddress.sin_family = AF_INET;
-    myAddress.sin_addr.s_addr = inet_addr( ipAddress );
-    myAddress.sin_port = htons( port );
+	myAddress.sin_family = AF_INET;
+	myAddress.sin_addr.s_addr = inet_addr( ipAddress );
+	myAddress.sin_port = htons( port );
 
-    //cout<<"CONNECTED"<<endl;
+	//std::cout <<"CONNECTED"<<endl;
 
-    if ( connect( mySocket, (SOCKADDR*) &myAddress, sizeof( myAddress ) ) == SOCKET_ERROR )
-    {
-        cerr<<"ClientSocket: Failed to connect\n";
-        system("pause");
-        WSACleanup();
-        exit(13);
-    } 
+	if ( connect( mySocket, (struct sockaddr*)&myAddress, sizeof( myAddress ) ) == -1)
+	{
+		std::cerr <<"ClientSocket: Failed to connect\n";
+		system("pause");
+		exit(13);
+	} 
 }
