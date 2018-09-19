@@ -5,16 +5,14 @@
 // PortAudio FILE HPP
 //
 
-
 #ifndef PORTAUDIO_HPP_
 	#define PORTAUDIO_HPP_
-
 /*
 ** INCLUDE - PORTAUDIO UTILES 
 */
-#include <iostream>
-#include <stdio.h>
-#include <stdlib.h>
+# include <iostream>
+# include <stdio.h>
+# include <stdlib.h>
 # include "portaudio.h"
 
 /*
@@ -27,13 +25,13 @@
 # define DITHER_FLAG     (0) 
 # define WRITE_TO_FILE   (0)
 # define PA_SAMPLE_TYPE  paFloat32
-typedef float SAMPLE;
 # define SAMPLE_SILENCE  (0.0f)
 # define PRINTF_S_FORMAT "%.8f"
 
 /*
 ** STRUCT - PORTAUDIO UTILES 
 */
+typedef float SAMPLE;
 typedef struct
 {
     int          frameIndex;  /* Index into sample array. */
@@ -52,7 +50,8 @@ namespace Audio
 			void	setOSampleParams(PaStreamParameters &ouput, PaSampleFormat sampleFormat);
 			void	setOLatencyParams(PaStreamParameters &ouput, PaTime suggestedLatency);
 			void	setOHostParams(PaStreamParameters &ouput, void *hostApiSpecificStreamInfo);
-			PaStreamParameters	getOParams(void);
+			PaDeviceIndex &getODeviceParams();
+			PaStreamParameters	&getOParams();
 		private:
 			PaStreamParameters  oParams;
 	};
@@ -64,21 +63,10 @@ namespace Audio
 			void	setISampleParams(PaStreamParameters &input, PaSampleFormat sampleFormat);
 			void	setILatencyParams(PaStreamParameters &input, PaTime suggestedLatency);
 			void	setIHostParams(PaStreamParameters &input, void *hostApiSpecificStreamInfo);
-			PaStreamParameters	getIParams(void);
+			PaDeviceIndex &getIDeviceParams();	
+			PaStreamParameters	&getIParams();
 		private:
 			PaStreamParameters  iParams;
-	};
-	class 	PortData {
-		public:
-			void	setData(paTestData &data);
-			void	setMaxFrameData(paTestData &data, int maxFrameIndex);
-			void	setFrameData(paTestData &data, int frameIndex);
-			void	setRecordedData(paTestData &data, SAMPLE *recordedSamples);
-			int		getFrameIndex(void);
-			paTestData	getData(void);
-			SAMPLE	*getRecordedData(void);
-		private:
-			paTestData data;
 	};
 	class	PortAudio
 	{
@@ -96,20 +84,19 @@ namespace Audio
 			const char *GetErrorText(PaError errorCode);
 			PaDeviceIndex GetDefaultInputDevice(void);
 			PaDeviceIndex GetDefaultOutputDevice(void);
-			PaError	getPaError();
-			SAMPLE	getSampleMax();
-			SAMPLE	getSampleVal();
-			void	setSampleMax(SAMPLE &max, SAMPLE value);
-			void	setSampleVal(SAMPLE &val, SAMPLE value);
-			void	setPaError(PaError &err, PaError value);
-			PaStream *getPaStream();
 			void Sleep(long msec);
-		private:
-			PaStream	*stream; // onlyGetter
-			PaError	err; // get&Set
-			SAMPLE	max; // get&Set
-			SAMPLE	val; // get&Set
 	};
 }
+
+int	recordCallback(const void *, void *, unsigned long,
+			   const PaStreamCallbackTimeInfo* timeInfo,
+			   PaStreamCallbackFlags statusFlags,
+			   void *userData);
+
+int	playCallback(const void *, void *, unsigned long,
+			   const PaStreamCallbackTimeInfo* timeInfo,
+			   PaStreamCallbackFlags statusFlags,
+			   void *userData);
+			   
 
 #endif /* PORTAUDIO_HPP_ */

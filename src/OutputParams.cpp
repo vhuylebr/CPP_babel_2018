@@ -37,7 +37,12 @@ void    Audio::OutputParams::setOHostParams(PaStreamParameters &output, void *ho
     output.hostApiSpecificStreamInfo = hostApiSpecificStreamInfo;
 }
 
-PaStreamParameters    Audio::OutputParams::getOParams()
+PaDeviceIndex   &Audio::OutputParams::getODeviceParams()
+{
+    return oParams.device;
+}
+
+PaStreamParameters    &Audio::OutputParams::getOParams()
 {
     return oParams;
 }
