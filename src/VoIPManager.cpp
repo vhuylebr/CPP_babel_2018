@@ -44,12 +44,32 @@ void    Audio::VoIPManager::initOutput(Audio::OutputParams &pOutput)
 	pOutput.setOHostParams(pOutput.getOParams(), NULL);
 }
 
-void    Audio::VoIPManager::openStreamInput(PaStream *stream, paTestData data)
+PaError Audio::VoIPManager::RecordingUser(PaStream *stream, paTestData &data)
 {
-    _portA.OpenStream(&stream, &_pInput.getIParams(), NULL, 
+    PaError err = paNoError;
+
+    printf("\n=== Now recording!! Please speak into the microphone. ===\n"); fflush(stdout);
+	while ((err =  _portA.IsStreamActive(stream)) == 1) {
+	    printf("index = %d\n", data.frameIndex ); fflush(stdout);
+	}
+    if (err < 0) {
+        stopStream(data, _err);
+    }
+}
+
+
+PaStream    *Audio::VoIPManager::openStreamInput(PaStream *stream, paTestData &data)
+{
+    PaError err = paNoError;
+    err = _portA.OpenStream(&stream, &_pInput.getIParams(), NULL, 
                     SAMPLE_RATE, FRAMES_PER_BUFFER, paClipOff, 
                     recordCallback, &data);
+    if (err != paNoError) {
+        return NULL;
+    }
+    return stream;
 }
+
 
 void    Audio::VoIPManager::initDataSamples(paTestData &data)
 {
@@ -58,16 +78,34 @@ void    Audio::VoIPManager::initDataSamples(paTestData &data)
 		data.recordedSamples[i] = 0;
 	}
 }
-
-PaError Audio::VoIPManager::startRecordInput(paTestData &data, PaError &err)
+// @Return NULL (After using stopStream())
+PaStream *Audio::VoIPManager::startRecordInput(paTestData &data)
 {
+    _err = paNoError;
     data = initRecord(data, getUtilsData());
+
     if(data.recordedSamples == NULL)
-        stopStream(data, err);
+        stopStream(data, _err);
     initDataSamples(data);
-    if ((err = _portA.Initialize()) != paNoError)
-        stopStream(data, err);
+    if ((_err = _portA.Initialize()) != paNoError)
+        stopStream(data, _err);
     initInput(_pInput);
+    if ((_stream = openStreamInput(_stream, data)) == NULL) 
+        stopStream(data, _err);
+    if ((_err = _portA.StartStream(_stream)) != paNoError)
+        stopStream(data, _err);
+   if ((_err = RecordingUser(_stream, data)) != paNoError)
+        stopStream(data, _err); 
+    if ((_err = _portA.CloseStream(_stream)) != paNoError)
+        stopStream(data, _err);
+    data.frameIndex = 0;
+    return _stream;
+}
+
+PaStream *Audio::VoIPManager::playRecordOutput(paTestData &data)
+{
+    _err = paNoError;
+    initOutput(_pOutput);
 }
 
 int Audio::VoIPManager::stopStream(paTestData &data, PaError err)
