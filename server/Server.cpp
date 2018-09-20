@@ -23,10 +23,12 @@ void Server::handle_accept(std::shared_ptr<Session> session, const boost::system
         boost::system::error_code ignored_error;
         std::cout << "newSession" << std::endl;
         boost::asio::write(session->get_socket(), boost::asio::buffer("Login"), ignored_error);
-        _clients.push_back(std::make_shared<Session>(ios));
-        acceptor.async_accept(_clients.back()->get_socket(),
-                            boost::bind(&Server::handle_accept, this, _clients.back(),
+        _clients.push_back(session);
+        std::shared_ptr<Session> session = std::make_shared<Session>(ios);
+        acceptor.async_accept(session->get_socket(),
+                            boost::bind(&Server::handle_accept, this, session,
                                         boost::asio::placeholders::error));
+        displayAllName();
         std::cout << "EndHandleAcept" << std::endl;
     } else {
       std::cerr << "err: " + err.message() << std::endl;
@@ -37,4 +39,12 @@ void Server::handle_accept(std::shared_ptr<Session> session, const boost::system
 void Server::removeSession(int id) {
     _clients.erase(_clients.begin());
     std::cout << "Remove " << _clients.size() << id << std::endl;
+}
+
+void Server::displayAllName() {
+    std::cout << "name: ";
+    for (auto client : _clients) {
+         std::cout << (void*)client.get() << " |" << client->getName() << ", ";
+    }
+    std::cout << std::endl;
 }
