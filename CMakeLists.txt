@@ -2,16 +2,18 @@ cmake_minimum_required(VERSION 2.8)
 project(myproject CXX)
 add_definitions("-std=c++11")
 
+set(CPP_FILE "./client/src/")
+set(SERVER "./server/")
+
 # Download automatically, you can also just copy the conan.cmake file
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.12/conan.cmake"
-"${CMAKE_BINARY_DIR}/conan.cmake")
+	message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+	file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.12/conan.cmake"
+		"${CMAKE_BINARY_DIR}/conan.cmake")
 endif()
 
 include(${CMAKE_BINARY_DIR}/conan.cmake)
 
-set(SERVER "./server/")
 #Check if you have the binary conan if you have intalled conan
 conan_check()
 
@@ -30,9 +32,16 @@ BUILD missing)
 
 add_executable(babel_server ${SERVER}main.cpp ${SERVER}Server.cpp ${SERVER}Session.cpp)
 
-#We have to add by hand all package beacause if not it does not work (CONAN_PKG::Poco CONAN_PKG::boost)
+add_executable(babel_client ${CPP_FILE}main.cpp
+			 ${CPP_FILE}PortAudio.cpp
+			 ${CPP_FILE}OutputParams.cpp
+			 ${CPP_FILE}InputParams.cpp
+			 ${CPP_FILE}VoIPManager.cpp
+			 ${CPP_FILE}recordCallBack.cpp)
+
 IF (WIN32)
 	set(CONAN_LIBS ${CONAN_LIBS_RELEASE})
 ENDIF()
 
+target_link_libraries(babel_client ${CONAN_LIBS})
 target_link_libraries(babel_server ${CONAN_LIBS})
