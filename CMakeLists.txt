@@ -27,7 +27,7 @@ conan_cmake_run(CONANFILE conanfile.txt
 BASIC_SETUP
 BUILD missing)
 
-add_executable(main main.cpp WSocket.cpp)
+add_executable(main main.cpp Server.cpp Session.cpp)
 
 #We have to add by hand all package beacause if not it does not work (CONAN_PKG::Poco CONAN_PKG::boost)
 target_link_libraries(main ${CONAN_LIBS})

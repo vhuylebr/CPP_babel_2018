@@ -1,92 +1,11 @@
-#include <iostream>
-#include <memory>
-#include <boost/asio.hpp>
-#include <boost/bind.hpp>
+/*
+** EPITECH PROJECT, 2018
+** main.cpp
+** File description:
+** main
+*/
 
-//thanks kalven for tips/debugging
-
-using boost::asio::ip::tcp;
-
-class Session : public std::enable_shared_from_this<Session>
-{
-public:
-  Session(boost::asio::io_service& ios)
-    : socket(ios) {}
-
-  tcp::socket& get_socket()
-  {
-    return socket;
-  }
-
-  void start()
-  {
-    socket.async_read_some(
-        boost::asio::buffer(data, max_length),
-        boost::bind(&Session::handle_read, this,
-                    shared_from_this(),
-                    boost::asio::placeholders::error,
-                    boost::asio::placeholders::bytes_transferred));
-  }
-
-  void handle_read(std::shared_ptr<Session>& s,
-                   const boost::system::error_code& err,
-                   size_t bytes_transferred)
-  {
-    if (!err) {
-      socket.async_read_some(
-          boost::asio::buffer(data, max_length),
-          boost::bind(&Session::handle_read, this,
-                      shared_from_this(),
-                      boost::asio::placeholders::error,
-                      boost::asio::placeholders::bytes_transferred));
-    std::cout << "recv: " << data << std::endl;
-    boost::system::error_code ignored_error;
-
-    // writing the message for current time
-    boost::asio::write(socket, boost::asio::buffer("Hello"), ignored_error);
-    } else {
-      std::cerr << "err (recv): " << err.message() << std::endl;
-    }
-  }
-
-private:
-  tcp::socket socket;
-  enum { max_length = 1024 };
-  char data[max_length];
-};
-
-class Server {
-public:
-  Server(boost::asio::io_service& ios,
-         short port) : ios(ios), acceptor(ios, tcp::endpoint(tcp::v4(), port))
-  {
-    std::shared_ptr<Session> session = std::make_shared<Session>(ios);
-    acceptor.async_accept(session->get_socket(),
-                          boost::bind(&Server::handle_accept, this,
-                                      session,
-                                      boost::asio::placeholders::error));
-  }
-
-  void handle_accept(std::shared_ptr<Session> session,
-                     const boost::system::error_code& err)
-  {
-    if (!err) {
-      session->start();
-      std::cout << "newSession" << std::endl;
-      session = std::make_shared<Session>(ios);
-      acceptor.async_accept(session->get_socket(),
-                            boost::bind(&Server::handle_accept, this, session,
-                                        boost::asio::placeholders::error));
-    }
-    else {
-      std::cerr << "err: " + err.message() << std::endl;
-      session.reset();
-    }
-  }
-private:
-  boost::asio::io_service& ios;
-  tcp::acceptor acceptor;
-};
+#include "Server.hpp"
 
 int main(int argc, char *argv[])
 {
