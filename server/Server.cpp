@@ -31,7 +31,6 @@ void Server::handle_accept(std::shared_ptr<Session> session, const boost::system
     if (!err) {
         session->start(this);
         boost::system::error_code ignored_error;
-        std::cout << "newSession" << std::endl;
         boost::asio::write(session->get_socket(), boost::asio::buffer("Login"), ignored_error);
         _clients.push_back(session);
         std::shared_ptr<Session> session = std::make_shared<Session>(ios);
@@ -39,7 +38,6 @@ void Server::handle_accept(std::shared_ptr<Session> session, const boost::system
                             boost::bind(&Server::handle_accept, this, session,
                                         boost::asio::placeholders::error));
         displayAllName();
-        std::cout << "EndHandleAcept" << std::endl;
     } else {
       std::cerr << "err: " + err.message() << std::endl;
       session.reset();
@@ -47,8 +45,8 @@ void Server::handle_accept(std::shared_ptr<Session> session, const boost::system
 }
 
 void Server::removeSession(int id) {
-    _clients.erase(_clients.begin());
-    std::cout << "Remove " << _clients.size() << id << std::endl;
+    // TO DO
+    // _clients.erase(_clients.begin());
 }
 
 void Server::displayAllName() {
@@ -63,7 +61,6 @@ void    Server::execActions(const std::string &cmd, Session *session) {
     std::size_t                 previous = 0;
     std::vector<std::string>    info;
 
-    std::cout << "CMD: = " << cmd << std::endl;
     current = cmd.find(' ');
     while (current != std::string::npos) {
         info.push_back(cmd.substr(previous, current - previous));
