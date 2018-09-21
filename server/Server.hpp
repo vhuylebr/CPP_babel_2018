@@ -10,8 +10,10 @@
 #include <boost/asio.hpp>
 #include <boost/bind.hpp>
 #include <vector>
+#include <unordered_map>
 #include <string>
 #include <array>
+#include <functional>
 
 using boost::asio::ip::tcp;
 
@@ -39,8 +41,11 @@ public:
     void handle_accept(std::shared_ptr<Session>, const boost::system::error_code&);
 	  void removeSession(int);
     void displayAllName(void);
+    void execActions(const std::string &);
 private:
   boost::asio::io_service& ios;
   tcp::acceptor acceptor;
   std::vector<std::shared_ptr<Session> >   _clients;
+  using ptrFunc = std::function<int(std::vector<std::string>)>;
+  std::unordered_map<std::string, ptrFunc>  _actions;
 };
