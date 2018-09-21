@@ -32,7 +32,7 @@ void Session::handle_read(std::shared_ptr<Session>& s, const boost::system::erro
                       shared_from_this(),
                       boost::asio::placeholders::error,
                       boost::asio::placeholders::bytes_transferred, server));
-    _name = std::string(data.data()) - 1;
+    _name = std::string(data.data());
     boost::system::error_code ignored_error;
     boost::asio::write(socket, boost::asio::buffer("InConnect"), ignored_error);
     } else {
