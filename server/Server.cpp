@@ -52,18 +52,18 @@ void Server::removeSession(int id) {
 }
 
 void Server::displayAllName() {
-    std::cout << "name: ";
     for (auto client : _clients) {
-         std::cout << (void*)client.get() << " |" << client->getName() << ", ";
+        // parcours tout les session
+        //  std::cout << (void*)client.get() << " |" << client->getName() << ", ";
     }
-    std::cout << std::endl;
 }
 
-void    Server::execActions(const std::string &cmd) {
+void    Server::execActions(const std::string &cmd, Session *session) {
     std::size_t                 current;
     std::size_t                 previous = 0;
     std::vector<std::string>    info;
 
+    std::cout << "CMD: = " << cmd << std::endl;
     current = cmd.find(' ');
     while (current != std::string::npos) {
         info.push_back(cmd.substr(previous, current - previous));

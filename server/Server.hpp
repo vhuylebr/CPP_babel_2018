@@ -41,7 +41,7 @@ public:
     void handle_accept(std::shared_ptr<Session>, const boost::system::error_code&);
 	  void removeSession(int);
     void displayAllName(void);
-    void execActions(const std::string &);
+    void execActions(const std::string &, Session*);
 private:
   boost::asio::io_service& ios;
   tcp::acceptor acceptor;
