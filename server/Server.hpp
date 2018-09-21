@@ -42,10 +42,13 @@ public:
 	  void removeSession(int);
     void displayAllName(void);
     void execActions(const std::string &, Session*);
+    
 private:
-  boost::asio::io_service& ios;
-  tcp::acceptor acceptor;
-  std::vector<std::shared_ptr<Session> >   _clients;
-  using ptrFunc = std::function<int(std::vector<std::string>)>;
-  std::unordered_map<std::string, ptrFunc>  _actions;
+    static int  test(std::vector<std::string>);
+    static int  test2(std::vector<std::string>);
+    boost::asio::io_service& ios;
+    tcp::acceptor acceptor;
+    std::vector<std::shared_ptr<Session> >   _clients;
+    using ptrFunc = std::function<int(std::vector<std::string>)>;
+    std::unordered_map<std::string, ptrFunc>  _actions;
 };

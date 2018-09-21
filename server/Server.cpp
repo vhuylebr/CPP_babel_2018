@@ -7,15 +7,6 @@
 
 #include "Server.hpp"
 
-int test(std::vector<std::string> cmd)
-{
-    for (auto &it : cmd) {
-        std::cout << it;
-    }
-    std::cout << std::endl;
-    return 0;
-}
-
 Server::Server(boost::asio::io_service& ios, short port)
 	: ios(ios), acceptor(ios, tcp::endpoint(tcp::v4(), port)) {
     std::shared_ptr<Session> session = std::make_shared<Session>(ios);
@@ -24,7 +15,8 @@ Server::Server(boost::asio::io_service& ios, short port)
                           boost::bind(&Server::handle_accept, this,
                                       session,
                                       boost::asio::placeholders::error));
-    _actions["test"] = test;
+    _actions["test"] = Server::test;
+    _actions["toto"] = Server::test2;
 }
 
 void Server::handle_accept(std::shared_ptr<Session> session, const boost::system::error_code& err) {
@@ -75,4 +67,22 @@ void    Server::execActions(const std::string &cmd, Session *session) {
         std::cerr << "This command doesn't exist" << std::endl;
     else
         _actions[info[0]](info);
+}
+
+int     Server::test(std::vector<std::string> cmd)
+{
+    for (auto &it : cmd) {
+        std::cout << it;
+    }
+    std::cout << std::endl;
+    return 0;
+}
+
+int     Server::test2(std::vector<std::string> cmd)
+{
+    for (auto &it : cmd) {
+        std::cout << it;
+    }
+    std::cout << std::endl;
+    return 0;
 }
