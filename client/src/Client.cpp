@@ -14,7 +14,7 @@ Client::~Client()
 Client::Client(boost::asio::io_service &io_service, std::string ip, int port)
     : _endpointServer(boost::asio::ip::address::from_string(ip.c_str()), port),
       _ipServer(ip), _portServer(port), _socket(std::make_shared<tcp::socket>(io_service))
-      ,_udpClient(port + 1)
+      ,_udpClient(port)
 {
     _actions["toto"] = Client::method1;
     _actions["tata"] = Client::method2;

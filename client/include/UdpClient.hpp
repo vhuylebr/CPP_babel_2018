@@ -25,7 +25,8 @@ class UdpClient
     void handle_send(boost::shared_ptr<std::string> message,
                      const boost::system::error_code &error,
                      std::size_t size);
-    udp::socket _socket;
+    std::shared_ptr<udp::socket> _socket;
+    boost::asio::io_service ioService;
     int         _portHost;
     udp::endpoint remote_endpoint_;
     boost::array<char, 1024> recv_buffer_;

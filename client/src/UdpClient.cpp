@@ -25,13 +25,11 @@ UdpClient::UdpClient(int port)
 }
 
 void UdpClient::hangUp() {
-    _socket.close();
+    _socket->close();
 }
 
 void UdpClient::startCall(std::string &remoteIp, int remotePort) {
-    boost::asio::io_service ioService;
-    _socket = udp::socket(ioService);
-    // , udp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), _portHost)
+    _socket = std::make_shared<udp::socket>(ioService, udp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), _portHost)),
     remote_endpoint_ = udp::endpoint(boost::asio::ip::address::from_string(remoteIp.c_str()), remotePort);
     start_receive();
     start_sending();
@@ -43,7 +41,7 @@ void UdpClient::start_sending()
     std::cout << "start sending" << std::endl;
     boost::shared_ptr<std::string> message(
         new std::string(make_daytime_string()));
-    _socket.async_send_to(boost::asio::buffer(*message), remote_endpoint_,
+    _socket->async_send_to(boost::asio::buffer(*message), remote_endpoint_,
                           boost::bind(&UdpClient::handle_send, this, message,
                                       boost::asio::placeholders::error,
                                       boost::asio::placeholders::bytes_transferred));
@@ -51,7 +49,7 @@ void UdpClient::start_sending()
 void UdpClient::start_receive()
 {
     std::cout << "start receive" << std::endl;
-    _socket.async_receive_from(
+    _socket->async_receive_from(
         boost::asio::buffer(recv_buffer_), remote_endpoint_,
         boost::bind(&UdpClient::handle_receive, this,
                     boost::asio::placeholders::error,
