@@ -30,10 +30,13 @@ conan_cmake_run(CONANFILE conanfile.txt
 BASIC_SETUP
 BUILD missing)
 
+include_directories(inc ./client/include)
+
 add_executable(babel_server ${SERVER}main.cpp ${SERVER}Server.cpp ${SERVER}Session.cpp)
 
 add_executable(babel_client ${CPP_FILE}main.cpp
 			${CPP_FILE}Client.cpp
+			${CPP_FILE}UdpClient.cpp
 			${CPP_FILE}PortAudio.cpp
 			${CPP_FILE}OutputParams.cpp
 			${CPP_FILE}InputParams.cpp

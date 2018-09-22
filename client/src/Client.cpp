@@ -12,12 +12,13 @@ Client::~Client()
 }
 
 Client::Client(boost::asio::io_service &io_service, std::string ip, int port)
-    : _endpoint(boost::asio::ip::address::from_string(ip.c_str()), port),
-      _ip(ip), _port(port), _socket(std::make_shared<tcp::socket>(io_service))
+    : _endpointServer(boost::asio::ip::address::from_string(ip.c_str()), port),
+      _ipServer(ip), _portServer(port), _socket(std::make_shared<tcp::socket>(io_service))
+      ,_udpClient(port + 1)
 {
     _actions["toto"] = Client::method1;
     _actions["tata"] = Client::method2;
-    _socket->connect(_endpoint);
+    _socket->connect(_endpointServer);
     start_receive();
 }
 
@@ -73,4 +74,9 @@ int Client::method1(std::vector<std::string> cmd)
 int Client::method2(std::vector<std::string> cmd)
 {
     return 0;
+}
+
+void Client::call(std::string &remoteIp, int remotePort)
+{
+    _udpClient.startCall(remoteIp, remotePort);
 }
