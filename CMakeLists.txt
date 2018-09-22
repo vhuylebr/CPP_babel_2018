@@ -33,11 +33,12 @@ BUILD missing)
 add_executable(babel_server ${SERVER}main.cpp ${SERVER}Server.cpp ${SERVER}Session.cpp)
 
 add_executable(babel_client ${CPP_FILE}main.cpp
-			 ${CPP_FILE}PortAudio.cpp
-			 ${CPP_FILE}OutputParams.cpp
-			 ${CPP_FILE}InputParams.cpp
-			 ${CPP_FILE}VoIPManager.cpp
-			 ${CPP_FILE}recordCallBack.cpp)
+			${CPP_FILE}Client.cpp
+			${CPP_FILE}PortAudio.cpp
+			${CPP_FILE}OutputParams.cpp
+			${CPP_FILE}InputParams.cpp
+			${CPP_FILE}VoIPManager.cpp
+			${CPP_FILE}recordCallBack.cpp)
 
 IF (WIN32)
 	set(CONAN_LIBS ${CONAN_LIBS_RELEASE})

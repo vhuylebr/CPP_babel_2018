@@ -34,7 +34,10 @@ void Session::handle_read(std::shared_ptr<Session>& s, const boost::system::erro
                       boost::asio::placeholders::bytes_transferred, server));
     server->execActions(std::string(data.data()), this);
     boost::system::error_code ignored_error;
-    boost::asio::write(socket, boost::asio::buffer("InConnect"), ignored_error);
+
+    // permet l'envoie de reponse
+    // boost::asio::write(socket, boost::asio::buffer("InConnect"), ignored_error);
+
     } else {
         std::cerr << "err (recv): " << err.message() << std::endl;
         server->displayAllName();
