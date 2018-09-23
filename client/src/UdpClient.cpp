@@ -29,7 +29,7 @@ void UdpClient::hangUp() {
 }
 
 void UdpClient::startCall(std::string &remoteIp, int remotePort) {
-    _socket = std::make_shared<udp::socket>(ioService, udp::endpoint(boost::asio::ip::address::from_string("127.0.0.1"), _portHost)),
+    _socket = std::make_shared<udp::socket>(ioService, udp::endpoint(udp::v4(), _portHost)),
     remote_endpoint_ = udp::endpoint(boost::asio::ip::address::from_string(remoteIp.c_str()), remotePort);
     start_receive();
     start_sending();

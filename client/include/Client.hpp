@@ -16,7 +16,7 @@ using boost::asio::ip::tcp;
 class Client
 {
 public:
-  Client(boost::asio::io_service &io_service, std::string ip, int port);
+  Client(boost::asio::io_service &io_service, std::string, int, int);
   ~Client();
   void call(std::string&, int);
 

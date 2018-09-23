@@ -21,8 +21,8 @@
 int main(int ac, char **av)
 {
 	boost::asio::io_service io_service;
-	Client client(io_service, "127.0.0.1", std::stoi(av[1]));
-  // client.call(std::string("127.0.0.1"), std::stoi(av[2]));
+	Client client(io_service, "127.0.0.1", std::stoi(av[1]), std::stoi(av[2]));
+  // client.call(std::string("127.0.0.1"), std::stoi(av[3]));
 	io_service.run();
 	return 0;
 }
