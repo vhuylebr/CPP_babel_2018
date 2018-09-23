@@ -26,15 +26,9 @@ void Session::start(Server *server) {
 void Session::handle_read(std::shared_ptr<Session>& s, const boost::system::error_code& err,
         size_t bytes_transferred, Server *server) {
     if (!err) {
-      socket.async_read_some(
-          boost::asio::buffer(data, max_length),
-          boost::bind(&Session::handle_read, this,
-                      shared_from_this(),
-                      boost::asio::placeholders::error,
-                      boost::asio::placeholders::bytes_transferred, server));
     server->execActions(std::string(data.data()), this);
     boost::system::error_code ignored_error;
-
+    start(server);
     // permet l'envoie de reponse
     // boost::asio::write(socket, boost::asio::buffer("InConnect"), ignored_error);
 

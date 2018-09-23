@@ -23,7 +23,6 @@ void Server::handle_accept(std::shared_ptr<Session> session, const boost::system
     if (!err) {
         session->start(this);
         boost::system::error_code ignored_error;
-        boost::asio::write(session->get_socket(), boost::asio::buffer("Login"), ignored_error);
         _clients.push_back(session);
         std::shared_ptr<Session> session = std::make_shared<Session>(ios);
         acceptor.async_accept(session->get_socket(),
@@ -52,7 +51,7 @@ void    Server::execActions(const std::string &cmd, Session *session) {
     std::size_t                 current;
     std::size_t                 previous = 0;
     std::vector<std::string>    info;
-
+    std::cout << "receive data: " << cmd << std::endl;
     current = cmd.find(' ');
     while (current != std::string::npos) {
         info.push_back(cmd.substr(previous, current - previous));

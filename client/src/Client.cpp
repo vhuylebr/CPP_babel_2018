@@ -13,13 +13,21 @@ Client::~Client()
 
 Client::Client(boost::asio::io_service &io_service, std::string ip, int port, int portUdpHost)
     : _endpointServer(boost::asio::ip::address::from_string(ip.c_str()), port),
-      _ipServer(ip), _portServer(port), _socket(std::make_shared<tcp::socket>(io_service))
-      ,_udpClient(portUdpHost)
+      _ipServer(ip), _portServer(port), _socket(std::make_shared<tcp::socket>(io_service)), _udpClient(portUdpHost)
 {
     _actions["toto"] = Client::method1;
     _actions["tata"] = Client::method2;
     _socket->connect(_endpointServer);
     start_receive();
+    start_send();
+}
+
+void Client::start_send()
+{
+
+    _socket->async_send(boost::asio::buffer(send_buf),
+    boost::bind(&Client::handle_send, this,
+        boost::asio::placeholders::error));
 }
 
 void Client::start_receive()
@@ -32,21 +40,22 @@ void Client::start_receive()
 void Client::handle_receive(const boost::system::error_code &error)
 {
     std::string cmd = std::string(recv_buf.data());
-
+    //handle when the server disconnect
     std::cout << "handling receive: " << error << ": " << error.message() << std::endl;
     std::cout << cmd << std::endl;
     execActions(cmd);
-    send_something("send_somthing");
     start_receive();
 }
 
-void    Client::execActions(const std::string &cmd) {
-    std::size_t                 current;
-    std::size_t                 previous = 0;
-    std::vector<std::string>    info;
+void Client::execActions(const std::string &cmd)
+{
+    std::size_t current;
+    std::size_t previous = 0;
+    std::vector<std::string> info;
 
     current = cmd.find(' ');
-    while (current != std::string::npos) {
+    while (current != std::string::npos)
+    {
         info.push_back(cmd.substr(previous, current - previous));
         previous = current + 1;
         current = cmd.find(' ', previous);
@@ -58,7 +67,18 @@ void    Client::execActions(const std::string &cmd) {
         _actions[info[0]](info);
 }
 
-void Client::send_something(std::string message)
+void Client::handle_send(const boost::system::error_code &error)
+{
+    std::string command;
+    std::cin >> command;
+    for (int i = 0; i < command.length(); i++) {
+        send_buf[i] = command[i];
+        send_buf[i + 1] = 0;
+    }
+    start_send();
+}
+
+void Client::sendMessage(std::string message)
 {
     boost::array<char, 128> buf;
     std::copy(message.begin(), message.end(), buf.begin());
