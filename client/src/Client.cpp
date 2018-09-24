@@ -40,9 +40,11 @@ void Client::start_receive()
 void Client::handle_receive(const boost::system::error_code &error)
 {
     std::string cmd = std::string(recv_buf.data());
+    for (int i = 0; i < 1025; i++)
+        recv_buf[i] = 0;
     //handle when the server disconnect
-    std::cout << "handling receive: " << error << ": " << error.message() << std::endl;
-    std::cout << cmd << std::endl;
+    //std::cout << "handling receive: " << error << ": " << error.message() << std::endl;
+    //std::cout << cmd << std::endl;
     execActions(cmd);
     start_receive();
 }
@@ -61,18 +63,21 @@ void Client::execActions(const std::string &cmd)
         current = cmd.find(' ', previous);
     }
     info.push_back(cmd.substr(previous, current - previous));
-    if (!_actions[info[0]])
+    /*if (!_actions[info[0]])
         std::cerr << "This command doesn't exist" << std::endl;
     else
-        _actions[info[0]](info);
+        _actions[info[0]](info);*/
 }
 
 void Client::handle_send(const boost::system::error_code &error)
 {
-    std::string command;
-    std::cin >> command;
-    for (int i = 0; i < command.length(); i++) {
-        send_buf[i] = command[i];
+    std::string cmd;
+    char        c;
+
+    while (std::cin.get(c) && c != '\n')
+        cmd += c;
+    for (int i = 0; i < 256; i++) {
+        send_buf[i] = cmd[i];
         send_buf[i + 1] = 0;
     }
     start_send();

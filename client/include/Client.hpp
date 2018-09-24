@@ -25,7 +25,7 @@ private:
   std::string _ipServer;
   tcp::endpoint _endpointServer;
   std::array<char, 1024> recv_buf;
-  std::array<char, 1024> send_buf;
+  std::array<char, 256> send_buf;
   std::shared_ptr<tcp::socket> _socket;
   using ptrFunc = std::function<int(std::vector<std::string>)>;
   std::unordered_map<std::string, ptrFunc> _actions;

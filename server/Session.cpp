@@ -8,7 +8,7 @@
 #include "Server.hpp"
 
 Session::Session(boost::asio::io_service& ios)
-    : socket(ios), _name("") {}
+    : socket(ios), _name(""), _login(false), _ip(socket.remote_endpoint().address().to_string()) {}
 
 tcp::socket& Session::get_socket() {
     return socket;
@@ -30,11 +30,30 @@ void Session::handle_read(std::shared_ptr<Session>& s, const boost::system::erro
     boost::system::error_code ignored_error;
     start(server);
     // permet l'envoie de reponse
-    // boost::asio::write(socket, boost::asio::buffer("InConnect"), ignored_error);
+    //boost::asio::write(socket, boost::asio::buffer("InConnect"), ignored_error);
 
     } else {
         std::cerr << "err (recv): " << err.message() << std::endl;
         server->displayAllName();
         server->removeSession(3);
     }
+}
+
+void    Session::setName(std::string name)
+{
+    _name = name;
+    _login = true;
+}
+
+void    Session::writeData(std::string message)
+{
+    boost::system::error_code ignored_error;
+
+    boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
+}
+
+void    Session::receiveCall(const std::string &user)
+{
+    std::cout << user << " is trying to call you" << std::endl;
+    writeData(user + " is trying to call you\n");
 }

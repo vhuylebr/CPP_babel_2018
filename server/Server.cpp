@@ -15,8 +15,8 @@ Server::Server(boost::asio::io_service& ios, short port)
                           boost::bind(&Server::handle_accept, this,
                                       session,
                                       boost::asio::placeholders::error));
-    _actions["test"] = Server::test;
-    _actions["toto"] = Server::test2;
+    //_actions["call"] = Server::call;
+    //_actions["toto"] = Server::test2;
 }
 
 void Server::handle_accept(std::shared_ptr<Session> session, const boost::system::error_code& err) {
@@ -24,6 +24,7 @@ void Server::handle_accept(std::shared_ptr<Session> session, const boost::system
         session->start(this);
         boost::system::error_code ignored_error;
         _clients.push_back(session);
+        session->writeData("Succesfuly connected\n");
         std::shared_ptr<Session> session = std::make_shared<Session>(ios);
         acceptor.async_accept(session->get_socket(),
                             boost::bind(&Server::handle_accept, this, session,
@@ -47,10 +48,36 @@ void Server::displayAllName() {
     }
 }
 
+std::shared_ptr<Session> Server::getSession(const std::string &name) {
+    for (auto &it : _clients) {
+        if (it->getName() == name)
+            return it;
+    }
+    return nullptr;
+}
+
+void    Server::createSession(std::vector<std::string> info, Session *session)
+{
+    if (info[0] != "login") {
+        std::cout << "You need to use login before executing command\n";
+        //return session->writeData("You need to use login before executing command\n");
+        return ;
+    }
+    else if (info.size() == 1 || getSession(info[1]) != nullptr) {
+        std::cout << "This name already exist\n";
+        //return session->writeData("This name already exist\n");
+        return ;
+    }
+    session->setName(info[1]);
+    std::cout << "Login succesfully created\n";
+    //session->writeData("Login succesfully created\n");
+}
+
 void    Server::execActions(const std::string &cmd, Session *session) {
     std::size_t                 current;
     std::size_t                 previous = 0;
     std::vector<std::string>    info;
+
     std::cout << "receive data: " << cmd << std::endl;
     current = cmd.find(' ');
     while (current != std::string::npos) {
@@ -59,22 +86,34 @@ void    Server::execActions(const std::string &cmd, Session *session) {
         current = cmd.find(' ', previous);
     }
     info.push_back(cmd.substr(previous, current - previous));
-    if (!_actions[info[0]])
-        std::cerr << "This command doesn't exist" << std::endl;
-    else
-        _actions[info[0]](info);
+    if (!session->isLogin())
+        return createSession(info, session);
+    else {
+        switch (info[0]) {
+            case "call" : return this->call(info, session);
+            case "test" : return this->test2(info, session);
+            default : std::cout << "This command doesn't exist" << std::endl;
+        }
+    }
 }
 
-int     Server::test(std::vector<std::string> cmd)
+int     Server::call(std::vector<std::string> cmd, std::shared_ptr<Session> session)
 {
-    for (auto &it : cmd) {
-        std::cout << it;
+    std::shared_ptr<Session>    dest;
+
+    if (cmd.size() != 3) {
+        std::cout << "call Port Name" << std::endl;
+        return 1;
     }
-    std::cout << std::endl;
+    else if (getSession(cmd[2]) == nullptr) {
+        std::cout << "The user " << cmd[2] << " doesn't exist\n";
+        return 1;
+    }
+    dest->receiveCall(session->getName());
     return 0;
 }
 
-int     Server::test2(std::vector<std::string> cmd)
+int     Server::test2(std::vector<std::string> cmd, std::shared_ptr<Session> session)
 {
     for (auto &it : cmd) {
         std::cout << it;
