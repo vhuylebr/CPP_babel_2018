@@ -8,13 +8,16 @@
 #include "Server.hpp"
 
 Session::Session(boost::asio::io_service& ios)
-    : socket(ios), _name(""), _login(false), _ip(socket.remote_endpoint().address().to_string()) {}
+    : socket(ios), _name(""), _login(false)
+{
+}
 
 tcp::socket& Session::get_socket() {
     return socket;
 }
 
 void Session::start(Server *server) {
+    _ip = socket.remote_endpoint().address().to_string();
     socket.async_read_some(
         boost::asio::buffer(data, max_length),
         boost::bind(&Session::handle_read, this,
