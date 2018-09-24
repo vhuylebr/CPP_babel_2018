@@ -57,6 +57,7 @@ private:
     boost::asio::io_service& ios;
     tcp::acceptor acceptor;
     std::vector<std::shared_ptr<Session> >   _clients;
+    std::unordered_map<std::string, int>  _convertSwitch;
     //using ptrFunc = std::function<int(std::vector<std::string>, std::shared_ptr<Session>)>;
     //std::unordered_map<std::string, ptrFunc>  _actions;
 };

@@ -15,8 +15,8 @@ Server::Server(boost::asio::io_service& ios, short port)
                           boost::bind(&Server::handle_accept, this,
                                       session,
                                       boost::asio::placeholders::error));
-    //_actions["call"] = Server::call;
-    //_actions["toto"] = Server::test2;
+    _convertSwitch["call"] = 0;
+    _convertSwitch["test"] = 1;
 }
 
 void Server::handle_accept(std::shared_ptr<Session> session, const boost::system::error_code& err) {
@@ -88,36 +88,38 @@ void    Server::execActions(const std::string &cmd, Session *session) {
     info.push_back(cmd.substr(previous, current - previous));
     if (!session->isLogin())
         return createSession(info, session);
+    else if (!_convertSwitch[info[0]])
+        std::cout << "This command doesn't exist" << std::endl;
     else {
-        switch (info[0]) {
-            case "call" : return this->call(info, session);
-            case "test" : return this->test2(info, session);
+        switch (_convertSwitch[info[0]]) {
+            case 0 : return this->call(info, getSession(session->getName()));
+            case 1 : return this->test2(info, getSession(session->getName()));
             default : std::cout << "This command doesn't exist" << std::endl;
         }
     }
 }
 
-int     Server::call(std::vector<std::string> cmd, std::shared_ptr<Session> session)
+void     Server::call(std::vector<std::string> cmd, std::shared_ptr<Session> session)
 {
     std::shared_ptr<Session>    dest;
 
     if (cmd.size() != 3) {
         std::cout << "call Port Name" << std::endl;
-        return 1;
+        return ;
     }
     else if (getSession(cmd[2]) == nullptr) {
         std::cout << "The user " << cmd[2] << " doesn't exist\n";
-        return 1;
+        return ;
     }
     dest->receiveCall(session->getName());
-    return 0;
+    return ;
 }
 
-int     Server::test2(std::vector<std::string> cmd, std::shared_ptr<Session> session)
+void     Server::test2(std::vector<std::string> cmd, std::shared_ptr<Session> session)
 {
     for (auto &it : cmd) {
         std::cout << it;
     }
     std::cout << std::endl;
-    return 0;
+    return ;
 }
