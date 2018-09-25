@@ -8,7 +8,7 @@
 #include "Server.hpp"
 
 Session::Session(boost::asio::io_service& ios)
-    : socket(ios), _name(""), _login(false)
+    : socket(ios), _name(""), _login(false), _isCalling(false), _isReceiving(false)
 {
 }
 
@@ -55,8 +55,42 @@ void    Session::writeData(std::string message)
     boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
 }
 
-void    Session::receiveCall(const std::string &user)
+void    Session::receiveCall(const std::string &user, const std::string &ip, int port)
 {
+    _isReceiving = true;
+    _userToCall = user;
+    _portToCall = port;
+    _ipToCall = ip;
     std::cout << user << " is trying to call you" << std::endl;
     writeData(user + " is trying to call you\n");
+}
+
+void    Session::acceptCall()
+{
+    int port = 8080;
+
+    std::cout << "accept " << _ip << " " << port << std::endl; 
+    _isReceiving = false;
+}
+
+void    Session::rejectCall()
+{
+    std::cout << "reject";
+    _isReceiving = false;
+    _portToCall = -1;
+    _ipToCall = "";
+}
+
+void    Session::isRejected()
+{
+    _isCalling = false;
+    _portToCall = -1;
+    _ipToCall = "";
+}
+
+void    Session::isAccepted(const std::string &ip, int port)
+{
+    _isCalling = false;
+    _ipToCall = ip;
+    _portToCall = port;
 }

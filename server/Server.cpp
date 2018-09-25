@@ -16,7 +16,8 @@ Server::Server(boost::asio::io_service& ios, short port)
                                       session,
                                       boost::asio::placeholders::error));
     _convertSwitch["call"] = 0;
-    _convertSwitch["test"] = 1;
+    _convertSwitch["accept"] = 1;
+    _convertSwitch["reject"] = 2;
 }
 
 void Server::handle_accept(std::shared_ptr<Session> session, const boost::system::error_code& err) {
@@ -93,7 +94,8 @@ void    Server::execActions(const std::string &cmd, Session *session) {
     else {
         switch (_convertSwitch[info[0]]) {
             case 0 : return this->call(info, getSession(session->getName()));
-            case 1 : return this->test2(info, getSession(session->getName()));
+            case 1 : return this->accept(info, getSession(session->getName()));
+            case 2 : return this->reject(getSession(session->getName()));
             default : std::cout << "This command doesn't exist" << std::endl;
         }
     }
@@ -102,6 +104,7 @@ void    Server::execActions(const std::string &cmd, Session *session) {
 void     Server::call(std::vector<std::string> cmd, std::shared_ptr<Session> session)
 {
     std::shared_ptr<Session>    dest;
+    int                         host_port;
 
     if (cmd.size() != 3) {
         std::cout << "call Port Name" << std::endl;
@@ -111,15 +114,36 @@ void     Server::call(std::vector<std::string> cmd, std::shared_ptr<Session> ses
         std::cout << "The user " << cmd[2] << " doesn't exist\n";
         return ;
     }
-    dest->receiveCall(session->getName());
+    try {
+        host_port = stoi(cmd[1]);
+    } catch (std::exception &ex) {
+        std::cerr << "Problem with port" << std::endl;
+        return ;
+    }
+    session->setIsCalling(true);
+    session->setUserToCall(cmd[2]);
+    dest->receiveCall(session->getName(), session->getIp(), host_port);
     return ;
 }
 
-void     Server::test2(std::vector<std::string> cmd, std::shared_ptr<Session> session)
+void    Server::accept(std::vector<std::string> info, std::shared_ptr<Session> session)
 {
-    for (auto &it : cmd) {
-        std::cout << it;
+    int port;
+
+    if (info.size() != 3) {
+        std::cerr << "Missing port or IP for accepting the call" << std::endl;
+        return ;
     }
-    std::cout << std::endl;
-    return ;
+    try {
+        port = std::stoi(info[2]);
+    } catch (std::exception &ex) {
+        std::cerr << "Problem with port" << std::endl;
+    }
+    getSession(session->getUserToCall())->isAccepted(info[1], port);
+}
+
+void    Server::reject(std::shared_ptr<Session> session)
+{
+    getSession(session->getUserToCall())->isRejected();
+    session->setUserToCall("");
 }

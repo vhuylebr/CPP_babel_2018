@@ -31,7 +31,15 @@ class Session : public std::enable_shared_from_this<Session> {
       bool        isLogin() {return _login;};
       void  setName(std::string);
       void  writeData(std::string);
-      void  receiveCall(const std::string &);
+      void  acceptCall();
+      void  receiveCall(const std::string &, const std::string &, int);
+      void  setIsCalling(bool val) {_isCalling = val;};
+      void  setIsReceiving(bool val) {_isReceiving = val;};
+      void  setUserToCall(std::string val) {_userToCall = val;};
+      std::string getUserToCall() {return _userToCall;};
+      void  rejectCall();
+      void  isRejected();
+      void  isAccepted(const std::string &, int);
 private:
   tcp::socket       socket;
   enum { max_length = 1024 };
@@ -39,6 +47,11 @@ private:
   std::array<char, max_length> data;
   bool              _login;
   std::string       _ip;
+  std::string       _ipToCall;
+  int               _portToCall;
+  std::string       _userToCall;
+  bool              _isCalling;
+  bool              _isReceiving;
 };
 
 class Server {
@@ -53,7 +66,8 @@ public:
 private:
     void        createSession(std::vector<std::string>, Session *);
     void  call(std::vector<std::string>, std::shared_ptr<Session>);
-    void  test2(std::vector<std::string>, std::shared_ptr<Session>);
+    void  accept(std::vector<std::string>, std::shared_ptr<Session>);
+    void  reject(std::shared_ptr<Session>);
     boost::asio::io_service& ios;
     tcp::acceptor acceptor;
     std::vector<std::shared_ptr<Session> >   _clients;
