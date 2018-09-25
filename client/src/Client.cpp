@@ -15,8 +15,9 @@ Client::Client(boost::asio::io_service &io_service, std::string ip, int port, in
     : _endpointServer(boost::asio::ip::address::from_string(ip.c_str()), port),
       _ipServer(ip), _portServer(port), _socket(std::make_shared<tcp::socket>(io_service)), _udpClient(portUdpHost)
 {
-    _actions["toto"] = Client::method1;
-    _actions["tata"] = Client::method2;
+    _convertSwitch["scy"] = 1;
+    _convertSwitch["accept"] = 2;
+    _convertSwitch["reject"] = 3;
     _socket->connect(_endpointServer);
     start_receive();
     start_send();
@@ -63,10 +64,12 @@ void Client::execActions(const std::string &cmd)
         current = cmd.find(' ', previous);
     }
     info.push_back(cmd.substr(previous, current - previous));
-    /*if (!_actions[info[0]])
-        std::cerr << "This command doesn't exist" << std::endl;
-    else
-        _actions[info[0]](info);*/
+    switch (_convertSwitch[info[0]]) {
+        case 1 : return this->scy();
+        case 2 : return this->accept();
+        case 3 : return this->reject();
+        default : std::cout << "This command doesn't exist" << std::endl;
+    }
 }
 
 void Client::handle_send(const boost::system::error_code &error)
@@ -91,17 +94,22 @@ void Client::sendMessage(std::string message)
     _socket->write_some(boost::asio::buffer(buf, message.size()), error);
 }
 
-int Client::method1(std::vector<std::string> cmd)
-{
-    return 0;
-}
-
-int Client::method2(std::vector<std::string> cmd)
-{
-    return 0;
-}
-
 void Client::call(std::string &remoteIp, int remotePort)
 {
     _udpClient.startCall(remoteIp, remotePort);
+}
+
+void    Client::accept()
+{
+
+}
+
+void    Client::reject()
+{
+
+}
+
+void    Client::scy()
+{
+    
 }
