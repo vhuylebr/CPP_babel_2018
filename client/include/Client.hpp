@@ -27,8 +27,7 @@ private:
   std::array<char, 1024> recv_buf;
   std::array<char, 256> send_buf;
   std::shared_ptr<tcp::socket> _socket;
-  using ptrFunc = std::function<int(std::vector<std::string>)>;
-  std::unordered_map<std::string, ptrFunc> _actions;
+  std::unordered_map<std::string, int>  _convertSwitch;
   UdpClient _udpClient;
 
   void start_receive();
@@ -36,9 +35,10 @@ private:
   void sendMessage(std::string);
   void handle_send(const boost::system::error_code &);
   void handle_receive(const boost::system::error_code &);
-  static int method1(std::vector<std::string>);
-  static int method2(std::vector<std::string>);
   void execActions(const std::string &);
+  void  scy();
+  void  accept();
+  void  reject();
 };
 
 #endif /* !CLIENT_HPP_ */
