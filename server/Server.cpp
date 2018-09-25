@@ -15,7 +15,7 @@ Server::Server(boost::asio::io_service& ios, short port)
                           boost::bind(&Server::handle_accept, this,
                                       session,
                                       boost::asio::placeholders::error));
-    _convertSwitch["call"] = 0;
+    _convertSwitch["call"] = 3;
     _convertSwitch["accept"] = 1;
     _convertSwitch["reject"] = 2;
 }
@@ -37,9 +37,16 @@ void Server::handle_accept(std::shared_ptr<Session> session, const boost::system
     }
 }
 
-void Server::removeSession(int id) {
-    // TO DO
-    // _clients.erase(_clients.begin());
+void Server::removeSession(std::string &name) {
+    int i = 0;
+    for (auto &it : _clients) {
+        if (it->getName() == name) {
+            _clients.erase(_clients.begin() + i);
+            std::cout << "Nb clients: " << _clients.size() << std::endl;
+            return;
+        }
+        ++i;
+    }
 }
 
 void Server::displayAllName() {
@@ -93,7 +100,7 @@ void    Server::execActions(const std::string &cmd, Session *session) {
         std::cout << "This command doesn't exist" << std::endl;
     else {
         switch (_convertSwitch[info[0]]) {
-            case 0 : return this->call(info, getSession(session->getName()));
+            case 3 : return this->call(info, getSession(session->getName()));
             case 1 : return this->accept(info, getSession(session->getName()));
             case 2 : return this->reject(getSession(session->getName()));
             default : std::cout << "This command doesn't exist" << std::endl;
@@ -120,6 +127,7 @@ void     Server::call(std::vector<std::string> cmd, std::shared_ptr<Session> ses
         std::cerr << "Problem with port" << std::endl;
         return ;
     }
+    dest = getSession(cmd[2]);
     session->setIsCalling(true);
     session->setUserToCall(cmd[2]);
     dest->receiveCall(session->getName(), session->getIp(), host_port);

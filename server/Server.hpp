@@ -32,7 +32,7 @@ class Session : public std::enable_shared_from_this<Session> {
       void  setName(std::string);
       void  writeData(std::string);
       void  acceptCall();
-      void  receiveCall(const std::string &, const std::string &, int);
+      void  receiveCall(std::string , std::string, int);
       void  setIsCalling(bool val) {_isCalling = val;};
       void  setIsReceiving(bool val) {_isReceiving = val;};
       void  setUserToCall(std::string val) {_userToCall = val;};
@@ -58,11 +58,11 @@ class Server {
 public:
     Server(boost::asio::io_service&, short);
     void handle_accept(std::shared_ptr<Session>, const boost::system::error_code&);
-	  void removeSession(int);
+	  void removeSession(std::string &);
     void  displayAllName();
     std::shared_ptr<Session> getSession(const std::string &);
     void execActions(const std::string &, Session*);
-    
+
 private:
     void        createSession(std::vector<std::string>, Session *);
     void  call(std::vector<std::string>, std::shared_ptr<Session>);

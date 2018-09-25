@@ -44,7 +44,7 @@ void Client::handle_receive(const boost::system::error_code &error)
         recv_buf[i] = 0;
     //handle when the server disconnect
     //std::cout << "handling receive: " << error << ": " << error.message() << std::endl;
-    //std::cout << cmd << std::endl;
+    // std::cout << cmd << std::endl;
     execActions(cmd);
     start_receive();
 }

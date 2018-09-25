@@ -29,16 +29,11 @@ void Session::start(Server *server) {
 void Session::handle_read(std::shared_ptr<Session>& s, const boost::system::error_code& err,
         size_t bytes_transferred, Server *server) {
     if (!err) {
-    server->execActions(std::string(data.data()), this);
-    boost::system::error_code ignored_error;
-    start(server);
-    // permet l'envoie de reponse
-    //boost::asio::write(socket, boost::asio::buffer("InConnect"), ignored_error);
-
+        server->execActions(std::string(data.data()), this);
+        boost::system::error_code ignored_error;
+        start(server);
     } else {
-        std::cerr << "err (recv): " << err.message() << std::endl;
-        server->displayAllName();
-        server->removeSession(3);
+        server->removeSession(_name);
     }
 }
 
@@ -55,21 +50,21 @@ void    Session::writeData(std::string message)
     boost::asio::write(socket, boost::asio::buffer(message), ignored_error);
 }
 
-void    Session::receiveCall(const std::string &user, const std::string &ip, int port)
+void    Session::receiveCall(std::string user, std::string ip, int port)
 {
     _isReceiving = true;
     _userToCall = user;
     _portToCall = port;
     _ipToCall = ip;
     std::cout << user << " is trying to call you" << std::endl;
-    writeData(user + " is trying to call you\n");
+    writeData("/sicy\n");
 }
 
 void    Session::acceptCall()
 {
     int port = 8080;
 
-    std::cout << "accept " << _ip << " " << port << std::endl; 
+    std::cout << "accept " << _ip << " " << port << std::endl;
     _isReceiving = false;
 }
 
