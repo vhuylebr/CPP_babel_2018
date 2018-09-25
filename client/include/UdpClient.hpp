@@ -6,6 +6,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include "VoIPManager.hpp"
 
 using boost::asio::ip::udp;
 
@@ -29,6 +30,7 @@ class UdpClient
     std::shared_ptr<udp::socket> _socket;
     boost::asio::io_service ioService;
     int         _portHost;
+    Audio::VoIPManager _voIP;
     udp::endpoint remote_endpoint_;
     boost::array<char, 1024> recv_buffer_;
 };
