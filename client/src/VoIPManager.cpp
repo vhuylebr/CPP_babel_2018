@@ -103,28 +103,29 @@ PaStream *Audio::VoIPManager::startRecordInput(paTestData &data)
     return _stream;
 }
 
-PaStream *Audio::VoIPManager::playRecordOutput(paTestData &data, PaStream *stream)
+PaStream *Audio::VoIPManager::playRecordOutput(paTestData &data)
 {
+    _stream = nullptr;
     _err = paNoError;
     initOutput(_pOutput);
-    _err = _portA.OpenStream(&stream, NULL, &_pOutput.getOParams(),
+    _err = _portA.OpenStream(&_stream, NULL, &_pOutput.getOParams(),
 			   SAMPLE_RATE,
 			   FRAMES_PER_BUFFER,
 			   paClipOff,
 			   playCallback,
 			   &data);
 	if(_err != paNoError) stopStream(data, _err);
-	if (stream) {
-		 _err = _portA.StartStream( stream );
+	if (_stream) {
+		 _err = _portA.StartStream( _stream );
 		 if( _err != paNoError ) stopStream(data, _err);
 		 printf("Waiting for playback to finish.\n"); fflush(stdout);
-		 while( ( _err = _portA.IsStreamActive( stream ) ) == 1 ) _portA.Sleep(100);
+		 while( ( _err = _portA.IsStreamActive( _stream ) ) == 1 ) _portA.Sleep(100);
 		 if( _err < 0 ) stopStream(data, _err);
-		 _err = _portA.CloseStream( stream );
+		 _err = _portA.CloseStream( _stream );
 		 if( _err != paNoError ) stopStream(data, _err);
 		 printf("Done.\n"); fflush(stdout);
 	 }
-     return stream;
+     return _stream;
 }
 
 int Audio::VoIPManager::stopStream(paTestData &data, PaError err)

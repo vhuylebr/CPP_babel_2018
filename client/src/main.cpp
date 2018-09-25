@@ -26,37 +26,6 @@ int main(int ac, char **av)
 	io_service.run();
 	return 0;
 }
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include <boost/thread.hpp>
-// #include "portaudio.h"
-// #include "../include/PortAudio.hpp"
-// #include "../include/VoIPManager.hpp"
-
-// PaStream	*startRecord(PaStream *stream, paTestData &data) {
-// 	if ((stream = voIP.startRecordInput(data)) == NULL) {
-// 		std::cout << "An error occured" << std::endl;
-// 		exit(84);
-// 	}
-// }
-
-// PaStream	*playRecord(PaStream *stream, paTestData &data)
-// {
-// 	if ((stream = voIP.playRecordOutput(data)) == NULL) {
-// 		std::cout << "An error occured" << std::endl;
-// 		exit(84);
-// 	}
-// }
-
-// int	main()
-// {
-// 	Audio::VoIPManager  voIP;
-// 	Audio::PortAudio  portA;
-// 	PaStream*           stream;
-// 	paTestData          data;
-// 	using namespace boost;
-//     thread thread_1 = thread(startRecord, stream, data);
-//     thread thread_2 = thread(playRecord, stream, data);
 // }
 // #include <stdio.h>
 // #include <stdlib.h>
@@ -75,6 +44,7 @@ int main(int ac, char **av)
 // 			std::cout << "An error occured" << std::endl;
 // 			exit(84);
 // 		}
+
 // 		if ((stream = voIP.playRecordOutput(data)) == NULL) {
 // 			std::cout << "An error occured" << std::endl;
 // 			exit(84);

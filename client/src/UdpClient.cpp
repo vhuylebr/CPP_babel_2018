@@ -41,7 +41,7 @@ void UdpClient::start_sending()
     std::cout << "start sending" << std::endl;
     boost::shared_ptr<std::string> message(
         new std::string(make_daytime_string()));
-    _socket->async_send_to(boost::asio::buffer(send_buf, 1280), remote_endpoint_,
+    _socket->async_send_to(boost::asio::buffer(send_data), remote_endpoint_,
                           boost::bind(&UdpClient::handle_send, this, message,
                                       boost::asio::placeholders::error,
                                       boost::asio::placeholders::bytes_transferred));
@@ -50,7 +50,7 @@ void UdpClient::start_receive()
 {
     std::cout << "start receive" << std::endl;
     _socket->async_receive_from(
-        boost::asio::buffer(recv_buffer_, 1280), remote_endpoint_,
+        boost::asio::buffer(recv_data), remote_endpoint_,
         boost::bind(&UdpClient::handle_receive, this,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
@@ -61,12 +61,11 @@ void UdpClient::handle_receive(const boost::system::error_code &error,
 {
     if (!error || error == boost::asio::error::message_size)
     {
-        // std::cout << "Receive data " << std::string(recv_buffer_.data()) << " size: " << size << std::endl;
-        // recv_buffer_
+        // std::cout << "Receive data " << std::string(recv_data.data()) << " size: " << size << std::endl;
+        // recv_data
     }
-    	paTestData  data;
 
-    if ((_voIP.playRecordOutput(data, recv_buffer_)) == NULL) {
+    if ((_voIP.playRecordOutput(recv_data[0])) == NULL) {
 	    std::cout << "An error occured" << std::endl;
 	    exit(84);
 	}
@@ -77,9 +76,8 @@ void UdpClient::handle_send(boost::shared_ptr<std::string> message,
                             const boost::system::error_code &error,
                             std::size_t size)
 {
-	paTestData  data;
 
-	if ((send_buf = _voIP.startRecordInput(data)) == NULL) {
+	if ((_voIP.startRecordInput(send_data[0])) == NULL) {
 		std::cout << "An error occured" << std::endl;
 		exit(84);
 	}

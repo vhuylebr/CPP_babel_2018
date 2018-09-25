@@ -32,8 +32,8 @@ class UdpClient
     int         _portHost;
     Audio::VoIPManager _voIP;
     udp::endpoint remote_endpoint_;
-    PaStream *recv_buffer_;
-    PaStream *send_buf;
+    std::array<paTestData, 1> send_data;
+    std::array<paTestData, 1> recv_data;
 };
 
 #endif /* UDPCLIENT_HPP_ */
