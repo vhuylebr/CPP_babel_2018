@@ -18,7 +18,7 @@ class Client
 public:
   Client(boost::asio::io_service &io_service, std::string, int, int);
   ~Client();
-  void call(std::string&, int);
+  void call(const std::string&, int);
 
 private:
   int _portServer;

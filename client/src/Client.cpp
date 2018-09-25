@@ -101,7 +101,7 @@ int Client::method2(std::vector<std::string> cmd)
     return 0;
 }
 
-void Client::call(std::string &remoteIp, int remotePort)
+void Client::call(const std::string &remoteIp, int remotePort)
 {
     _udpClient.startCall(remoteIp, remotePort);
 }

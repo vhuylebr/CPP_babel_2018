@@ -17,7 +17,7 @@ class UdpClient
   public:
     UdpClient(int port);
     ~UdpClient();
-    void startCall(std::string&, int);
+    void startCall(const std::string &remoteIp, int);
     void hangUp();
   private:
     void start_sending();
@@ -32,7 +32,8 @@ class UdpClient
     int         _portHost;
     Audio::VoIPManager _voIP;
     udp::endpoint remote_endpoint_;
-    boost::array<char, 1024> recv_buffer_;
+    PaStream *recv_buffer_;
+    PaStream *send_buf;
 };
 
 #endif /* UDPCLIENT_HPP_ */
