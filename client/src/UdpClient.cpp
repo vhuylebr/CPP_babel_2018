@@ -65,10 +65,10 @@ void UdpClient::handle_receive(const boost::system::error_code &error,
         // recv_data
     }
 
-    if ((_voIP.playRecordOutput(recv_data[0])) == NULL) {
-	    std::cout << "An error occured" << std::endl;
-	    exit(84);
-	}
+    // if ((_voIP.playRecordOutput(recv_data[0])) == NULL) {
+	//     std::cout << "An error occured" << std::endl;
+	//     exit(84);
+	// }
     start_receive();
 }
 
@@ -77,10 +77,10 @@ void UdpClient::handle_send(boost::shared_ptr<std::string> message,
                             std::size_t size)
 {
 
-	if ((_voIP.startRecordInput(send_data[0])) == NULL) {
-		std::cout << "An error occured" << std::endl;
-		exit(84);
-	}
+	// if ((_voIP.startRecordInput(send_data[0])) == NULL) {
+	// 	std::cout << "An error occured" << std::endl;
+	// 	exit(84);
+	// }
     // if (!error || error == boost::asio::error::message_size)
     // {
     //     std::cout << message->c_str() << std::endl;

@@ -16,38 +16,38 @@
 
 //   return 0;
 // }
-#include "../include/Client.hpp"
+// #include "../include/Client.hpp"
 
-int main(int ac, char **av)
-{
-	boost::asio::io_service io_service;
-	Client client(io_service, "10.41.175.115", std::stoi(av[1]), std::stoi(av[2]));
-   	client.call(std::string("10.41.175.115"), std::stoi(av[3]));
-	io_service.run();
-	return 0;
-}
-// }
-// #include <stdio.h>
-// #include <stdlib.h>
-// #include "portaudio.h"
-// #include "../include/PortAudio.hpp"
-// #include "../include/VoIPManager.hpp"
-
-// int	main()
+// int main(int ac, char **av)
 // {
-// 	Audio::VoIPManager  voIP;
-// 	PaStream*           stream;
-// 	paTestData          data;
-
-// 	while (1) {
-// 		if ((stream = voIP.startRecordInput(data)) == NULL) {
-// 			std::cout << "An error occured" << std::endl;
-// 			exit(84);
-// 		}
-
-// 		if ((stream = voIP.playRecordOutput(data)) == NULL) {
-// 			std::cout << "An error occured" << std::endl;
-// 			exit(84);
-// 		}
-// 	}
+// 	boost::asio::io_service io_service;
+// 	Client client(io_service, "10.41.175.115", std::stoi(av[1]), std::stoi(av[2]));
+//    	client.call(std::string("10.41.175.115"), std::stoi(av[3]));
+// 	io_service.run();
+// 	return 0;
 // }
+// }
+#include <stdio.h>
+#include <stdlib.h>
+#include "portaudio.h"
+#include "../include/PortAudio.hpp"
+#include "../include/VoIPManager.hpp"
+
+int	main()
+{
+	Audio::VoIPManager  voIP;
+	PaStream*           stream;
+	paTestData          data;
+
+	while (1) {
+		if ((stream = voIP.startRecordInput()) == NULL) {
+			std::cout << "An error occured" << std::endl;
+			exit(84);
+		}
+
+		// if ((stream = voIP.playRecordOutput(data)) == NULL) {
+		// 	std::cout << "An error occured" << std::endl;
+		// 	exit(84);
+		// }
+	}
+}

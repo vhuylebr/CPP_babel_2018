@@ -20,8 +20,9 @@
 */
 # define SAMPLE_RATE (44100)
 # define FRAMES_PER_BUFFER	(512)
-# define NUM_SECONDS     (5)
-# define NUM_CHANNELS    (2)
+# define SAMPLE_SIZE (4)
+# define NUM_SECONDS     (15)
+# define NUM_CHANNELS    (1)
 # define DITHER_FLAG     (0) 
 # define WRITE_TO_FILE   (0)
 # define PA_SAMPLE_TYPE  paFloat32

@@ -25,13 +25,13 @@ namespace Audio
 {
 	class VoIPManager {
 	public:
-		PaStream	*startRecordInput(paTestData &data);
+		PaStream	*startRecordInput(void);
 		PaStream	*playRecordOutput(paTestData &data);
 		void	initInput(Audio::InputParams &);
 		void	initOutput(Audio::OutputParams &);
 		PaError	RecordingUser(PaStream *stream, paTestData &data);
-		PaStream	*openStreamInput(PaStream *stream, paTestData &data);
-		int	stopStream(paTestData &data, PaError err);
+		PaStream	*openStreamRecord(PaStream *stream);
+		int	stopStream(PaError err);
 		void initDataSamples(paTestData &data);
 		paTestData	initRecord(paTestData &data, utilsData &utilsD);
 		utilsData	&getUtilsData(void);
