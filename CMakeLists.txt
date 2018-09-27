@@ -32,6 +32,7 @@ BUILD missing)
 
 include_directories(inc ./client/include)
 
+find_package(Qt5Widgets CONFIG REQUIRED)
 add_executable(babel_server ${SERVER}main.cpp ${SERVER}Server.cpp ${SERVER}Session.cpp)
 
 add_executable(babel_client ${CPP_FILE}main.cpp
@@ -47,5 +48,5 @@ IF (WIN32)
 	set(CONAN_LIBS ${CONAN_LIBS_RELEASE})
 ENDIF()
 
-target_link_libraries(babel_client ${CONAN_LIBS})
+target_link_libraries(babel_client ${CONAN_LIBS} Qt5::Widgets)
 target_link_libraries(babel_server ${CONAN_LIBS})
