@@ -18,7 +18,7 @@
 /*
 ** DEFINE - PORTAUDIO UTILES 
 */
-# define SAMPLE_RATE (44100)
+# define SAMPLE_RATE (54100)
 # define FRAMES_PER_BUFFER	(512)
 # define SAMPLE_SIZE (4)
 # define NUM_SECONDS     (15)
