@@ -40,7 +40,7 @@ void UdpClient::start_sending()
 {
     float buffAudio[480];
 
-    Pa_WriteStream(_stream, &buffAudio, 480);
+    Pa_ReadStream(_stream, &buffAudio, 480);
     std::cout << "start sending" << buffAudio[0] << std::endl;
     _socket->async_send_to(boost::asio::buffer(buffAudio), remote_endpoint_,
                           boost::bind(&UdpClient::handle_send, this, buffAudio,
@@ -63,8 +63,8 @@ void UdpClient::handle_receive(const boost::system::error_code &error,
     if (!error || error == boost::asio::error::message_size)
     {
     }
+    Pa_WriteStream(_stream, &recv_data, 480);
     std::cout << "Receive data " << recv_data[0] << " size: " << size << std::endl;
-    Pa_ReadStream(_stream, &recv_data, 480);
     // if ((_voIP.playRecordOutput(recv_data[0])) == NULL) {
 	//     std::cout << "An error occured" << std::endl;
 	//     exit(84);
