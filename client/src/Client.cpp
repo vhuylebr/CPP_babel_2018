@@ -11,9 +11,9 @@ Client::~Client()
 {
 }
 
-Client::Client(boost::asio::io_service &io_service, std::string ip, int port, int portUdpHost)
+Client::Client(boost::asio::io_service &io_service, std::string ip, int port, int portUdpHost, PaStream *stream)
     : _endpointServer(boost::asio::ip::address::from_string(ip.c_str()), port),
-      _ipServer(ip), _portServer(port), _socket(std::make_shared<tcp::socket>(io_service)), _udpClient(portUdpHost)
+      _ipServer(ip), _portServer(port), _socket(std::make_shared<tcp::socket>(io_service)), _udpClient(portUdpHost, stream)
 {
     _actions["toto"] = Client::method1;
     _actions["tata"] = Client::method2;

@@ -15,7 +15,7 @@ using boost::asio::ip::udp;
 class UdpClient
 {
   public:
-    UdpClient(int port);
+    UdpClient(int port, PaStream*);
     ~UdpClient();
     void startCall(const std::string &remoteIp, int);
     void hangUp();
@@ -24,7 +24,7 @@ class UdpClient
     void start_receive();
     void handle_receive(const boost::system::error_code &error,
                         std::size_t size);
-    void handle_send(boost::shared_ptr<std::string> message,
+    void handle_send(float *,
                      const boost::system::error_code &error,
                      std::size_t size);
     std::shared_ptr<udp::socket> _socket;
@@ -32,8 +32,9 @@ class UdpClient
     int         _portHost;
     Audio::VoIPManager _voIP;
     udp::endpoint remote_endpoint_;
-    std::array<paTestData, 1> send_data;
-    std::array<paTestData, 1> recv_data;
+    float send_data[480];
+    float recv_data[480];
+    PaStream *_stream;
 };
 
 #endif /* UDPCLIENT_HPP_ */

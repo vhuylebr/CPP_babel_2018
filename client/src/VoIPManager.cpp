@@ -58,11 +58,11 @@ PaStream *Audio::VoIPManager::startRecordInput(void)
         stopStream(_err);
     if ((_err = _portA.StartStream(_stream)) != paNoError)
         stopStream(_err);
-    while(1) {
-        Pa_WriteStream(_stream, &buffAudio, 480);
-        Pa_ReadStream(_stream, &buffAudio, 480);
-    }
-    stopStream(_err);
+    // while(1) {
+    //     Pa_WriteStream(_stream, &buffAudio, 480);
+    //     Pa_ReadStream(_stream, &buffAudio, 480);
+    // }
+    // stopStream(_err);
     return _stream;
 }
 

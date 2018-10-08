@@ -18,8 +18,8 @@ UdpClient::~UdpClient()
 {
 }
 
-UdpClient::UdpClient(int port)
-    : _portHost(port)
+UdpClient::UdpClient(int port, PaStream *stream)
+    : _portHost(port), _stream(stream)
 {
     std::cout << "init udpClient" << std::endl;
 }
@@ -38,11 +38,12 @@ void UdpClient::startCall(const std::string &remoteIp, int remotePort) {
 
 void UdpClient::start_sending()
 {
-    std::cout << "start sending" << std::endl;
-    boost::shared_ptr<std::string> message(
-        new std::string(make_daytime_string()));
-    _socket->async_send_to(boost::asio::buffer(send_data), remote_endpoint_,
-                          boost::bind(&UdpClient::handle_send, this, message,
+    float buffAudio[480];
+
+    Pa_WriteStream(_stream, &buffAudio, 480);
+    std::cout << "start sending" << buffAudio[0] << std::endl;
+    _socket->async_send_to(boost::asio::buffer(buffAudio), remote_endpoint_,
+                          boost::bind(&UdpClient::handle_send, this, buffAudio,
                                       boost::asio::placeholders::error,
                                       boost::asio::placeholders::bytes_transferred));
 }
@@ -61,10 +62,9 @@ void UdpClient::handle_receive(const boost::system::error_code &error,
 {
     if (!error || error == boost::asio::error::message_size)
     {
-        // std::cout << "Receive data " << std::string(recv_data.data()) << " size: " << size << std::endl;
-        // recv_data
     }
-
+    std::cout << "Receive data " << recv_data[0] << " size: " << size << std::endl;
+    Pa_ReadStream(_stream, &recv_data, 480);
     // if ((_voIP.playRecordOutput(recv_data[0])) == NULL) {
 	//     std::cout << "An error occured" << std::endl;
 	//     exit(84);
@@ -72,7 +72,7 @@ void UdpClient::handle_receive(const boost::system::error_code &error,
     start_receive();
 }
 
-void UdpClient::handle_send(boost::shared_ptr<std::string> message,
+void UdpClient::handle_send(float *buffAudio,
                             const boost::system::error_code &error,
                             std::size_t size)
 {
